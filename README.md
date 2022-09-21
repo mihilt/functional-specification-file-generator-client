@@ -1,1 +1,1 @@
-#Functional specification file generator client
+# Functional specification file generator client

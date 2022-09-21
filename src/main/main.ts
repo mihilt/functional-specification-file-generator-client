@@ -8,6 +8,7 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
+import os from 'os';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
@@ -26,13 +27,12 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-api', async (event, arg) => {
-  switch (arg[0]) {
-    case 'generateFile':
-      generateFile(event, arg[1]);
-      break;
-    default:
-  }
+ipcMain.on('generateFile', async (event, arg) => {
+  generateFile(event, arg[0]);
+});
+
+ipcMain.on('getOsInfo', async (event) => {
+  event.reply('getOsInfo', os.userInfo());
 });
 
 if (process.env.NODE_ENV === 'production') {
