@@ -12,6 +12,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import log from 'electron-log';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
+import generateFile from './generator/generateFile';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 
@@ -26,11 +27,12 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-api', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  setTimeout(() => {
-    event.reply('ipc-api', msgTemplate('pong'));
-  }, 1000);
+  switch (arg[0]) {
+    case 'generateFile':
+      generateFile(event, arg[1]);
+      break;
+    default:
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
