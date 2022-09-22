@@ -7,7 +7,7 @@ export default function Main() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [uploadedFileName, setUploadedFileName] = useState('');
-  const [uploadPath, setUploadPath] = useState('/Users/wonsik/dev');
+  const [uploadPath, setUploadPath] = useState('');
 
   const [excelLevel3Data, setExcelLevel3Data] = useState();
   const [excelLevel4Data, setExcelLevel4Data] = useState();
@@ -51,7 +51,6 @@ export default function Main() {
       'generateFile',
       (arg) => {
         setIsLoading(false);
-
         // eslint-disable-next-line no-alert
         alert(arg);
       }
@@ -157,7 +156,11 @@ export default function Main() {
         onClick={() => {
           setIsLoading(true);
           window.electron.ipcRenderer.sendMessage('generateFile', [
-            { excelLevel3Data, excelLevel4Data, uploadPath },
+            {
+              level3: excelLevel3Data,
+              level4: excelLevel4Data,
+              path: uploadPath,
+            },
           ]);
         }}
       >

@@ -20,15 +20,15 @@ export default function Navigation() {
             navigate('/');
           }}
         >
-          홈
+          엑셀 업로드
         </Button>
         <Button
           sx={{ width: '100%', textAlign: 'center' }}
           onClick={() => {
-            navigate('setting');
+            navigate('one-file');
           }}
         >
-          세팅
+          단일 파일 업로드
         </Button>
       </Box>
     </>

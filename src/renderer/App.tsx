@@ -3,18 +3,18 @@ import { MemoryRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Navigation from './components/Navigation';
 import Main from './page/Main';
-import Setting from './page/Setting';
+import OneFile from './page/OneFile';
 
 export default function App() {
   return (
     <>
       <Router>
         <Header />
-        <Navigation />
+        {/* <Navigation /> */}
         <Box sx={{ mx: 1 }}>
           <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/setting" element={<Setting />} />
+            <Route path="/one-file" element={<OneFile />} />
           </Routes>
         </Box>
       </Router>

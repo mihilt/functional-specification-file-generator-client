@@ -17,7 +17,7 @@ export default function Header(): JSX.Element {
               pointerEvents: 'none',
             }}
           >
-            Logisvalley
+            LogisValley
           </Typography>
         </Toolbar>
       </AppBar>

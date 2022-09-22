@@ -73,10 +73,17 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  const dev = { width: 1024, height: 728 };
+
+  const pro = {
+    width: 360,
+    height: 485,
+    resizable: false,
+  };
+
   mainWindow = new BrowserWindow({
+    ...dev,
     show: false,
-    width: 1024,
-    height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
       sandbox: false,
