@@ -76,8 +76,8 @@ const createWindow = async () => {
   const dev = { width: 1024, height: 728 };
 
   const pro = {
-    width: 360,
-    height: 485,
+    width: 400,
+    height: 570,
     resizable: false,
   };
 

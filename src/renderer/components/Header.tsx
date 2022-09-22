@@ -1,15 +1,13 @@
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Toolbar } from '@mui/material';
 
 export default function Header(): JSX.Element {
   return (
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography
-            variant="h6"
-            color="inherit"
-            component="div"
+          <Box
             sx={{
+              fontSize: 18,
               position: 'absolute',
               left: '50%',
               top: '50%',
@@ -17,8 +15,20 @@ export default function Header(): JSX.Element {
               pointerEvents: 'none',
             }}
           >
+            Instaports File Generator
+          </Box>
+          <Box
+            sx={{
+              fontSize: 12,
+              position: 'absolute',
+              left: '50%',
+              top: '75%',
+              transform: 'translate(-50%, -50%)',
+              pointerEvents: 'none',
+            }}
+          >
             LogisValley
-          </Typography>
+          </Box>
         </Toolbar>
       </AppBar>
     </>

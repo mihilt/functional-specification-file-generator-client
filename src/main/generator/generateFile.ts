@@ -15,9 +15,13 @@ const refineExcelData = (args: any) => {
 
 export default (event: any, args: any) => {
   const refinedExcelData = refineExcelData(args);
-  generateInstaportsFiles({ resData: refinedExcelData, path: args.path });
+  generateInstaportsFiles({
+    resData: refinedExcelData,
+    backendPath: args.backendPath,
+    frontendPath: args.frontendPath,
+  });
   event.reply(
     'generateFile',
-    `${args.path}\n경로에 파일 생성이 완료되었습니다.`
+    `${args.backendPath}\n${args.frontendPath}\n경로에 각각 백엔드와 프론트엔드 관련한 폴더들과 파일들이 생성이 완료되었습니다.`
   );
 };

@@ -6,8 +6,10 @@ import * as xlsx from 'xlsx';
 export default function Main() {
   const [isLoading, setIsLoading] = useState(false);
 
+  const [backendUploadPath, setBackendUploadPath] = useState('');
+  const [frontendUploadPath, setFrontendUploadPath] = useState('');
+
   const [uploadedFileName, setUploadedFileName] = useState('');
-  const [uploadPath, setUploadPath] = useState('');
 
   const [excelLevel3Data, setExcelLevel3Data] = useState();
   const [excelLevel4Data, setExcelLevel4Data] = useState();
@@ -23,6 +25,9 @@ export default function Main() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const readUploadFile = (onChangeEvent: any) => {
+    setExcelLevel3Data(undefined);
+    setExcelLevel4Data(undefined);
+
     onChangeEvent.preventDefault();
     if (onChangeEvent.target.files) {
       const reader = new FileReader();
@@ -58,7 +63,8 @@ export default function Main() {
     const removeGetOsInfoIpc = window.electron.ipcRenderer.on(
       'getOsInfo',
       (arg: any) => {
-        setUploadPath(`${arg.homedir}/Desktop`);
+        setBackendUploadPath(`${arg.homedir}/Desktop`);
+        setFrontendUploadPath(`${arg.homedir}/Desktop`);
       }
     );
 
@@ -77,10 +83,19 @@ export default function Main() {
   return (
     <>
       <TextField
-        label="경로"
+        label="백엔드 경로"
         variant="outlined"
-        value={uploadPath}
-        onChange={(e) => setUploadPath(e.target.value)}
+        value={backendUploadPath}
+        onChange={(e) => setBackendUploadPath(e.target.value)}
+        placeholder="파일 업로드 경로를 입력하세요."
+        sx={{ width: '100%', mt: 2 }}
+      />
+
+      <TextField
+        label="프론트엔드 경로"
+        variant="outlined"
+        value={frontendUploadPath}
+        onChange={(e) => setFrontendUploadPath(e.target.value)}
         placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', my: 2 }}
       />
@@ -95,7 +110,7 @@ export default function Main() {
         sx={{ width: '100%', mt: 2, mb: 1 }}
       />
 
-      <Box sx={{ display: 'flex', mb: 2 }}>
+      <Box sx={{ display: 'flex' }}>
         <Button variant="contained" component="label" sx={{ width: '100%' }}>
           파일 업로드
           <input
@@ -118,32 +133,84 @@ export default function Main() {
           초기화
         </Button>
       </Box>
+      <Box sx={{ borderBottom: '1px solid #E0E0E0', my: 3 }} />
       <Box
         sx={{
           border: '1px solid #E0E0E0',
           borderRadius: '5px',
-          p: 2,
+          p: 1,
           fontSize: 14,
         }}
       >
         <Box sx={{ display: 'flex' }}>
-          <Box sx={{ width: '100%' }}>
-            <Checkbox disabled checked={uploadPath !== ''} />
-            경로
+          <Box
+            sx={{
+              width: '100%',
+              color: backendUploadPath !== '' ? 'blue' : 'red',
+            }}
+          >
+            <Checkbox
+              sx={{ p: 0 }}
+              disabled
+              checked={backendUploadPath !== ''}
+            />
+            백엔드 폴더 경로
           </Box>
-          <Box sx={{ width: '100%' }}>
-            <Checkbox disabled checked={uploadedFileName !== ''} />
-            파일 업로드
+          <Box
+            sx={{
+              width: '100%',
+              color: frontendUploadPath !== '' ? 'blue' : 'red',
+            }}
+          >
+            <Checkbox
+              sx={{ p: 0 }}
+              disabled
+              checked={frontendUploadPath !== ''}
+            />
+            프론트엔드 폴더 경로
           </Box>
         </Box>
         <Box sx={{ display: 'flex' }}>
-          <Box sx={{ width: '100%' }}>
-            <Checkbox disabled checked={excelLevel3Data !== undefined} />
-            level3
+          <Box
+            sx={{
+              width: '100%',
+              color: uploadedFileName !== '' ? 'blue' : 'red',
+            }}
+          >
+            <Checkbox
+              sx={{ p: 0 }}
+              disabled
+              checked={uploadedFileName !== ''}
+            />
+            엑셀 파일 업로드 여부
           </Box>
-          <Box sx={{ width: '100%' }}>
-            <Checkbox disabled checked={excelLevel4Data !== undefined} />
-            level4
+        </Box>
+        <Box sx={{ display: 'flex' }}>
+          <Box
+            sx={{
+              width: '100%',
+              color: excelLevel3Data !== undefined ? 'blue' : 'red',
+            }}
+          >
+            <Checkbox
+              sx={{ p: 0 }}
+              disabled
+              checked={excelLevel3Data !== undefined}
+            />
+            엑셀 파일 level3 검증
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              color: excelLevel4Data !== undefined ? 'blue' : 'red',
+            }}
+          >
+            <Checkbox
+              sx={{ p: 0 }}
+              disabled
+              checked={excelLevel4Data !== undefined}
+            />
+            엑셀 파일 level4 검증
           </Box>
         </Box>
       </Box>
@@ -151,7 +218,11 @@ export default function Main() {
       <LoadingButton
         loading={isLoading}
         variant="outlined"
-        disabled={uploadedFileName === ''}
+        disabled={
+          uploadedFileName === '' ||
+          excelLevel3Data === undefined ||
+          excelLevel4Data === undefined
+        }
         sx={{ width: '100%', my: 2 }}
         onClick={() => {
           setIsLoading(true);
@@ -159,12 +230,13 @@ export default function Main() {
             {
               level3: excelLevel3Data,
               level4: excelLevel4Data,
-              path: uploadPath,
+              backendPath: backendUploadPath,
+              frontendPath: frontendUploadPath,
             },
           ]);
         }}
       >
-        생성하기
+        파일 생성하기
       </LoadingButton>
     </>
   );

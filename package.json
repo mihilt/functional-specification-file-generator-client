@@ -192,8 +192,8 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "productName": "LV-file-generator",
-    "appId": "org.erb.LV-file-generator",
+    "productName": "LogisVally-Instaports-File-Generator",
+    "appId": "org.erb.LogisVally-Instaports-File-Generator",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
