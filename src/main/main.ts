@@ -31,16 +31,22 @@ ipcMain.on('generateFile', async (event, arg) => {
   generateFile(event, arg[0]);
 });
 
-ipcMain.on('getOsInfo', async (event) => {
-  event.reply('getOsInfo', os.userInfo());
-});
-
 ipcMain.on('getFilePath', async (event, arg) => {
-  const directoryObject = await dialog.showOpenDialog(mainWindow, {
-    properties: ['openDirectory'],
-  });
+  let directoryObject;
 
-  if (!directoryObject.canceled) {
+  if (mainWindow !== null) {
+    directoryObject = await dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory'],
+    });
+  } else {
+    directoryObject = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    });
+  }
+
+  if (directoryObject.canceled) {
+    event.reply('getFilePath', { directoryObject: { filePaths: [''] }, arg });
+  } else {
     event.reply('getFilePath', { directoryObject, arg });
   }
 });

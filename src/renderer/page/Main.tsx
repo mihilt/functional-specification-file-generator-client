@@ -69,14 +69,6 @@ export default function Main() {
       }
     );
 
-    const removeGetOsInfoIpc = window.electron.ipcRenderer.on(
-      'getOsInfo',
-      (arg: any) => {
-        setBackendUploadPath(`${arg.homedir}/Desktop`);
-        setFrontendUploadPath(`${arg.homedir}/Desktop`);
-      }
-    );
-
     const removeGetFilePath = window.electron.ipcRenderer.on(
       'getFilePath',
       (arg: any) => {
@@ -88,15 +80,11 @@ export default function Main() {
       }
     );
 
-    window.electron.ipcRenderer.sendMessage('getOsInfo', []);
-
     return () => {
       if (removeGenerateFileIpc !== undefined) {
         removeGenerateFileIpc();
       }
-      if (removeGetOsInfoIpc !== undefined) {
-        removeGetOsInfoIpc();
-      }
+
       if (removeGetFilePath !== undefined) {
         removeGetFilePath();
       }
@@ -107,35 +95,31 @@ export default function Main() {
     <>
       <TextField
         label="백엔드 경로"
-        variant="outlined"
-        value={backendUploadPath}
+        value={backendUploadPath === '' ? ' ' : backendUploadPath}
         onClick={() => {
           window.electron.ipcRenderer.sendMessage('getFilePath', [
             { from: 'backEnd' },
           ]);
         }}
-        placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', mt: 2 }}
         inputProps={{ style: { cursor: 'pointer' } }}
       />
 
       <TextField
         label="프론트엔드 경로"
-        variant="outlined"
-        value={frontendUploadPath}
+        value={frontendUploadPath === '' ? ' ' : frontendUploadPath}
         onClick={() => {
           window.electron.ipcRenderer.sendMessage('getFilePath', [
             { from: 'frontEnd' },
           ]);
         }}
-        placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', my: 2 }}
-        inputProps={{ style: { cursor: 'pointer' } }}
+        inputProps={{ style: { cursor: 'pointer', userSelect: 'none' } }}
       />
 
       <TextField
         label="엑셀 파일"
-        variant="outlined"
+        focused
         disabled
         value={
           uploadedFileName === '' ? '선택된 파일이 없습니다.' : uploadedFileName
