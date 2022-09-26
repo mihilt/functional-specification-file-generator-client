@@ -16,7 +16,7 @@ export default function Main() {
 
   const inputFileRef: any = useRef();
 
-  const initialize = () => {
+  const initializeFile = () => {
     inputFileRef.current.value = '';
     setUploadedFileName('');
     setExcelLevel3Data(undefined);
@@ -46,9 +46,17 @@ export default function Main() {
           });
         }
       };
-      reader.readAsArrayBuffer(onChangeEvent.target.files[0]);
+      if (onChangeEvent.target.files[0] !== undefined) {
+        reader.readAsArrayBuffer(onChangeEvent.target.files[0]);
+      } else {
+        initializeFile();
+      }
     }
-    setUploadedFileName(onChangeEvent.target.files[0].name);
+    if (onChangeEvent.target.files[0] !== undefined) {
+      setUploadedFileName(onChangeEvent.target.files[0].name);
+    } else {
+      initializeFile();
+    }
   };
 
   useEffect(() => {
@@ -68,6 +76,7 @@ export default function Main() {
         setFrontendUploadPath(`${arg.homedir}/Desktop`);
       }
     );
+
     const removeGetFilePath = window.electron.ipcRenderer.on(
       'getFilePath',
       (arg: any) => {
@@ -107,6 +116,7 @@ export default function Main() {
         }}
         placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', mt: 2 }}
+        inputProps={{ style: { cursor: 'pointer' } }}
       />
 
       <TextField
@@ -120,6 +130,7 @@ export default function Main() {
         }}
         placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', my: 2 }}
+        inputProps={{ style: { cursor: 'pointer' } }}
       />
 
       <TextField
@@ -149,7 +160,7 @@ export default function Main() {
           variant="outlined"
           sx={{ width: '100%' }}
           onClick={() => {
-            initialize();
+            initializeFile();
           }}
         >
           초기화

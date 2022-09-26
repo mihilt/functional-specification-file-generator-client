@@ -36,7 +36,7 @@ ipcMain.on('getOsInfo', async (event) => {
 });
 
 ipcMain.on('getFilePath', async (event, arg) => {
-  const directoryObject = await dialog.showOpenDialog({
+  const directoryObject = await dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory'],
   });
 
