@@ -93,6 +93,11 @@ export default function Main() {
 
     const removeSetStore = window.electron.ipcRenderer.on('setStore', () => {});
 
+    const removeClearStore = window.electron.ipcRenderer.on(
+      'clearStore',
+      () => {}
+    );
+
     return () => {
       if (removeGenerateFileIpc !== undefined) {
         removeGenerateFileIpc();
@@ -108,6 +113,10 @@ export default function Main() {
 
       if (removeSetStore !== undefined) {
         removeSetStore();
+      }
+
+      if (removeClearStore !== undefined) {
+        removeClearStore();
       }
     };
   }, []);
@@ -168,7 +177,7 @@ export default function Main() {
             initializeFile();
           }}
         >
-          초기화
+          삭제
         </Button>
       </Box>
       <Box sx={{ borderBottom: '1px solid #E0E0E0', my: 3 }} />
@@ -253,6 +262,22 @@ export default function Main() {
         </Box>
       </Box>
 
+      <Button
+        onClick={() => {
+          window.electron.ipcRenderer.sendMessage('clearStore', []);
+          setBackendUploadPath('');
+          setFrontendUploadPath('');
+          inputFileRef.current.value = '';
+          setUploadedFileName('');
+          setExcelLevel3Data(undefined);
+          setExcelLevel4Data(undefined);
+        }}
+        variant="outlined"
+        sx={{ width: '100%', mt: 2, mb: 1 }}
+      >
+        설정 초기화
+      </Button>
+
       <LoadingButton
         loading={isLoading}
         variant="outlined"
@@ -261,7 +286,7 @@ export default function Main() {
           excelLevel3Data === undefined ||
           excelLevel4Data === undefined
         }
-        sx={{ width: '100%', my: 2 }}
+        sx={{ width: '100%' }}
         onClick={() => {
           window.electron.ipcRenderer.sendMessage('setStore', [
             'mainStore',

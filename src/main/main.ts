@@ -57,8 +57,12 @@ ipcMain.on('getStore', async (event, arg) => {
   event.reply('getStore', store.get(arg[0]));
 });
 
-ipcMain.on('setStore', async (event, arg) => {
-  event.reply('setStore', store.set(arg[0], arg[1]));
+ipcMain.on('setStore', async (_, arg) => {
+  store.set(arg[0], arg[1]);
+});
+
+ipcMain.on('clearStore', async (_0, _1) => {
+  store.clear();
 });
 
 if (process.env.NODE_ENV === 'production') {
