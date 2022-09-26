@@ -80,6 +80,19 @@ export default function Main() {
       }
     );
 
+    window.electron.ipcRenderer.sendMessage('getStore', ['mainStore']);
+    const removeGetStore = window.electron.ipcRenderer.on(
+      'getStore',
+      (arg: any) => {
+        if (arg !== undefined) {
+          setBackendUploadPath(arg.backendUploadPath);
+          setFrontendUploadPath(arg.frontendUploadPath);
+        }
+      }
+    );
+
+    const removeSetStore = window.electron.ipcRenderer.on('setStore', () => {});
+
     return () => {
       if (removeGenerateFileIpc !== undefined) {
         removeGenerateFileIpc();
@@ -87,6 +100,14 @@ export default function Main() {
 
       if (removeGetFilePath !== undefined) {
         removeGetFilePath();
+      }
+
+      if (removeGetStore !== undefined) {
+        removeGetStore();
+      }
+
+      if (removeSetStore !== undefined) {
+        removeSetStore();
       }
     };
   }, []);
@@ -242,6 +263,10 @@ export default function Main() {
         }
         sx={{ width: '100%', my: 2 }}
         onClick={() => {
+          window.electron.ipcRenderer.sendMessage('setStore', [
+            'mainStore',
+            { backendUploadPath, frontendUploadPath },
+          ]);
           setIsLoading(true);
           window.electron.ipcRenderer.sendMessage('generateFile', [
             {

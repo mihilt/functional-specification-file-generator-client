@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'generateFile' | 'getFilePath';
+export type Channels = 'generateFile' | 'getFilePath' | 'getStore' | 'setStore';
 
 contextBridge.exposeInMainWorld('electron', {
   ipcRenderer: {

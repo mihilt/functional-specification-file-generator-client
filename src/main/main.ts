@@ -8,9 +8,9 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import os from 'os';
-import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import log from 'electron-log';
+import Store from 'electron-store';
 import { autoUpdater } from 'electron-updater';
 import path from 'path';
 import generateFile from './generator/generateFile';
@@ -26,6 +26,8 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+const store = new Store();
 
 ipcMain.on('generateFile', async (event, arg) => {
   generateFile(event, arg[0]);
@@ -49,6 +51,14 @@ ipcMain.on('getFilePath', async (event, arg) => {
   } else {
     event.reply('getFilePath', { directoryObject, arg });
   }
+});
+
+ipcMain.on('getStore', async (event, arg) => {
+  event.reply('getStore', store.get(arg[0]));
+});
+
+ipcMain.on('setStore', async (event, arg) => {
+  event.reply('setStore', store.set(arg[0], arg[1]));
 });
 
 if (process.env.NODE_ENV === 'production') {
