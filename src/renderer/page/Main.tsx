@@ -60,11 +60,22 @@ export default function Main() {
         alert(arg);
       }
     );
+
     const removeGetOsInfoIpc = window.electron.ipcRenderer.on(
       'getOsInfo',
       (arg: any) => {
         setBackendUploadPath(`${arg.homedir}/Desktop`);
         setFrontendUploadPath(`${arg.homedir}/Desktop`);
+      }
+    );
+    const removeGetFilePath = window.electron.ipcRenderer.on(
+      'getFilePath',
+      (arg: any) => {
+        if (arg.arg[0].from === 'backEnd') {
+          setBackendUploadPath(arg.directoryObject.filePaths[0]);
+        } else if (arg.arg[0].from === 'frontEnd') {
+          setFrontendUploadPath(arg.directoryObject.filePaths[0]);
+        }
       }
     );
 
@@ -77,6 +88,9 @@ export default function Main() {
       if (removeGetOsInfoIpc !== undefined) {
         removeGetOsInfoIpc();
       }
+      if (removeGetFilePath !== undefined) {
+        removeGetFilePath();
+      }
     };
   }, []);
 
@@ -86,7 +100,11 @@ export default function Main() {
         label="백엔드 경로"
         variant="outlined"
         value={backendUploadPath}
-        onChange={(e) => setBackendUploadPath(e.target.value)}
+        onClick={() => {
+          window.electron.ipcRenderer.sendMessage('getFilePath', [
+            { from: 'backEnd' },
+          ]);
+        }}
         placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', mt: 2 }}
       />
@@ -95,7 +113,11 @@ export default function Main() {
         label="프론트엔드 경로"
         variant="outlined"
         value={frontendUploadPath}
-        onChange={(e) => setFrontendUploadPath(e.target.value)}
+        onClick={() => {
+          window.electron.ipcRenderer.sendMessage('getFilePath', [
+            { from: 'frontEnd' },
+          ]);
+        }}
         placeholder="파일 업로드 경로를 입력하세요."
         sx={{ width: '100%', my: 2 }}
       />
