@@ -282,6 +282,8 @@ export default function Main() {
         loading={isLoading}
         variant="outlined"
         disabled={
+          backendUploadPath === '' ||
+          frontendUploadPath === '' ||
           uploadedFileName === '' ||
           excelLevel3Data === undefined ||
           excelLevel4Data === undefined

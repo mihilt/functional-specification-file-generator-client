@@ -1,11 +1,11 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "logisvally-instaports-file-generator",
+  "version": "0.0.1",
+  "description": "",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
+    "name": "LogisVally",
+    "email": "",
     "url": "https://github.com/electron-react-boilerplate"
   },
   "main": "./dist/main/main.js",
