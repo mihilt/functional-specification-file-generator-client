@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import * as xlsx from 'xlsx';
 
 export default function Main() {
+  const { ipcRenderer } = window.electron;
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [backendUploadPath, setBackendUploadPath] = useState('');
@@ -60,43 +62,31 @@ export default function Main() {
   };
 
   useEffect(() => {
-    const removeGenerateFileIpc = window.electron.ipcRenderer.on(
-      'generateFile',
-      (arg) => {
-        setIsLoading(false);
-        // eslint-disable-next-line no-alert
-        alert(arg);
+    const removeGenerateFileIpc = ipcRenderer.on('generateFile', (arg) => {
+      setIsLoading(false);
+      // eslint-disable-next-line no-alert
+      alert(arg);
+    });
+
+    const removeGetFilePath = ipcRenderer.on('getFilePath', (arg: any) => {
+      if (arg.arg[0].from === 'backEnd') {
+        setBackendUploadPath(arg.directoryObject.filePaths[0]);
+      } else if (arg.arg[0].from === 'frontEnd') {
+        setFrontendUploadPath(arg.directoryObject.filePaths[0]);
       }
-    );
+    });
 
-    const removeGetFilePath = window.electron.ipcRenderer.on(
-      'getFilePath',
-      (arg: any) => {
-        if (arg.arg[0].from === 'backEnd') {
-          setBackendUploadPath(arg.directoryObject.filePaths[0]);
-        } else if (arg.arg[0].from === 'frontEnd') {
-          setFrontendUploadPath(arg.directoryObject.filePaths[0]);
-        }
+    ipcRenderer.sendMessage('getStore', ['mainStore']);
+    const removeGetStore = ipcRenderer.on('getStore', (arg: any) => {
+      if (arg !== undefined) {
+        setBackendUploadPath(arg.backendUploadPath);
+        setFrontendUploadPath(arg.frontendUploadPath);
       }
-    );
+    });
 
-    window.electron.ipcRenderer.sendMessage('getStore', ['mainStore']);
-    const removeGetStore = window.electron.ipcRenderer.on(
-      'getStore',
-      (arg: any) => {
-        if (arg !== undefined) {
-          setBackendUploadPath(arg.backendUploadPath);
-          setFrontendUploadPath(arg.frontendUploadPath);
-        }
-      }
-    );
+    const removeSetStore = ipcRenderer.on('setStore', () => {});
 
-    const removeSetStore = window.electron.ipcRenderer.on('setStore', () => {});
-
-    const removeClearStore = window.electron.ipcRenderer.on(
-      'clearStore',
-      () => {}
-    );
+    const removeClearStore = ipcRenderer.on('clearStore', () => {});
 
     return () => {
       if (removeGenerateFileIpc !== undefined) {
@@ -119,7 +109,7 @@ export default function Main() {
         removeClearStore();
       }
     };
-  }, []);
+  }, [ipcRenderer]);
 
   return (
     <>
@@ -127,9 +117,7 @@ export default function Main() {
         label="백엔드 경로"
         value={backendUploadPath === '' ? ' ' : backendUploadPath}
         onClick={() => {
-          window.electron.ipcRenderer.sendMessage('getFilePath', [
-            { from: 'backEnd' },
-          ]);
+          ipcRenderer.sendMessage('getFilePath', [{ from: 'backEnd' }]);
         }}
         sx={{ width: '100%', mt: 2 }}
         inputProps={{ style: { cursor: 'pointer' } }}
@@ -139,9 +127,7 @@ export default function Main() {
         label="프론트엔드 경로"
         value={frontendUploadPath === '' ? ' ' : frontendUploadPath}
         onClick={() => {
-          window.electron.ipcRenderer.sendMessage('getFilePath', [
-            { from: 'frontEnd' },
-          ]);
+          ipcRenderer.sendMessage('getFilePath', [{ from: 'frontEnd' }]);
         }}
         sx={{ width: '100%', my: 2 }}
         inputProps={{ style: { cursor: 'pointer', userSelect: 'none' } }}
@@ -264,7 +250,7 @@ export default function Main() {
 
       <Button
         onClick={() => {
-          window.electron.ipcRenderer.sendMessage('clearStore', []);
+          ipcRenderer.sendMessage('clearStore', []);
           setBackendUploadPath('');
           setFrontendUploadPath('');
           inputFileRef.current.value = '';
@@ -290,12 +276,12 @@ export default function Main() {
         }
         sx={{ width: '100%' }}
         onClick={() => {
-          window.electron.ipcRenderer.sendMessage('setStore', [
+          ipcRenderer.sendMessage('setStore', [
             'mainStore',
             { backendUploadPath, frontendUploadPath },
           ]);
           setIsLoading(true);
-          window.electron.ipcRenderer.sendMessage('generateFile', [
+          ipcRenderer.sendMessage('generateFile', [
             {
               level3: excelLevel3Data,
               level4: excelLevel4Data,
